@@ -3,10 +3,9 @@ import React from "react";
 export const Signal = ({ id, state, position, onClick, isEmergency }) => {
   return (
     <div
-      className={`
-        relative p-4 rounded-lg shadow-lg cursor-pointer
+      className={`relative p-2 rounded-full shadow-lg cursor-pointer
         ${isEmergency ? "animate-pulse border-2 border-red-500" : ""}
-      `}
+        flex flex-col justify-center items-center`}
       onClick={onClick}
     >
       <div className="flex flex-col gap-2">
@@ -26,8 +25,7 @@ export const Signal = ({ id, state, position, onClick, isEmergency }) => {
           }`}
         />
       </div>
-      <h1>{id}</h1>
-      <span className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-sm font-medium">
+      <span className="absolute -bottom-10 left-1/2 -translate-x-1/2 text-sm font-medium">
         {position}
       </span>
     </div>

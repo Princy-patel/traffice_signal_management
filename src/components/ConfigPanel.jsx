@@ -38,7 +38,7 @@ export const ConfigPanel = ({
           <div className="flex gap-2">
             <button
               onClick={() => onCycleModeChange("clockwise")}
-              className={`flex items-center gap-2 px-4 py-2 rounded ${
+              className={`flex items-center gap-2 px-4 py-2 rounded cursor-pointer ${
                 cycleMode === "clockwise"
                   ? "bg-blue-500 text-white"
                   : "bg-gray-100 hover:bg-gray-200"

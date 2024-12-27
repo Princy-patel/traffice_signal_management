@@ -30,15 +30,13 @@ function Home() {
 
   const updateSignals = useCallback(() => {
     const positions = getPositions(intersectionType);
-
-    console.log("activeSignalIndex", activeSignalIndex);
+    
     const newSignals = Array.from({ length: intersectionType }, (_, i) => ({
       id: i,
       state: i === activeSignalIndex ? "green" : "red",
       position: positions[i],
     }));
 
-    console.log("newSignals", newSignals);
     setSignals(newSignals);
   }, [intersectionType, activeSignalIndex]);
 
@@ -108,6 +106,7 @@ function Home() {
       setEmergencySignal(id);
 
       setTimeout(() => {
+        console.log("emergencySignalId", emergencySignalId)
         setEmergencySignalId(null);
         updateSignals();
       }, timerConfig.emergencyDuration * 1000);

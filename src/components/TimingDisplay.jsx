@@ -5,7 +5,7 @@ export const TimingDisplay = ({ remainingTime, totalDuration, label }) => {
 
   return (
     <div className="flex flex-col items-center">
-      <div className="relative w-20 h-20">
+      <div className="relative">
         <svg className="w-20 h-20 transform -rotate-90">
           <circle
             cx="40"
