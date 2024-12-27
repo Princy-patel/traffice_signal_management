@@ -30,15 +30,22 @@ function Home() {
 
   const updateSignals = useCallback(() => {
     const positions = getPositions(intersectionType);
-    
+
     const newSignals = Array.from({ length: intersectionType }, (_, i) => ({
       id: i,
-      state: i === activeSignalIndex ? "green" : "red",
+      state:
+        emergencySignalId !== null
+          ? i === emergencySignalId
+            ? "green"
+            : "red"
+          : i === activeSignalIndex
+          ? "green"
+          : "red",
       position: positions[i],
     }));
 
     setSignals(newSignals);
-  }, [intersectionType, activeSignalIndex]);
+  }, [intersectionType, activeSignalIndex, emergencySignalId]);
 
   useEffect(() => {
     updateSignals();
@@ -103,21 +110,22 @@ function Home() {
       if (emergencySignalId !== null) return;
 
       setEmergencySignalId(id);
-      setEmergencySignal(id);
+      setRemainingTime(timerConfig.emergencyDuration);
+      setSignals((prev) =>
+        prev.map((signal) => ({
+          ...signal,
+          state: signal.id === id ? "green" : "red",
+        }))
+      );
 
-      setTimeout(() => {
-        console.log("emergencySignalId", emergencySignalId)
+      const timeout = setTimeout(() => {
         setEmergencySignalId(null);
         updateSignals();
       }, timerConfig.emergencyDuration * 1000);
+
+      return () => clearTimeout(timeout);
     },
-    [
-      emergencySignalId,
-      setEmergencySignalId,
-      setEmergencySignal,
-      timerConfig.emergencyDuration,
-      updateSignals,
-    ]
+    [emergencySignalId, timerConfig.emergencyDuration, updateSignals]
   );
 
   return (
@@ -136,7 +144,7 @@ function Home() {
           onTimerConfigChange={setTimerConfig}
         />
 
-        {emergencySignalId !== null && (
+        {emergencySignalId !== null ? (
           <div className="flex items-center gap-2 bg-red-100 text-red-700 p-4 rounded-lg">
             <AlertTriangle className="w-5 h-5" />
             <span>
@@ -144,6 +152,11 @@ function Home() {
               {Math.ceil(remainingTime)} seconds.
             </span>
           </div>
+        ) : (
+          <p>
+            Click on any signal to trigger the emergency override and stop
+            normal operation.
+          </p>
         )}
 
         <div className="flex justify-center mt-52">
