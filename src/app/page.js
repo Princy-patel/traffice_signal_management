@@ -4,6 +4,7 @@ import React, { useState, useCallback, useEffect } from "react";
 import { AlertTriangle } from "lucide-react";
 import { ConfigPanel } from "@/components/ConfigPanel";
 import { Intersection } from "@/components/Intersection";
+import { DirectionControl } from "@/components/DirectionControl";
 
 function Home() {
   const [intersectionType, setIntersectionType] = useState(4);
@@ -77,7 +78,7 @@ function Home() {
   }, [emergencySignalId, cycleSignals, cycleMode]);
 
   useEffect(() => {
-    if (!isRunning) return;
+    if (!isRunning || (cycleMode === "manual" && !isRunning)) return;
 
     const timer = setInterval(() => {
       setRemainingTime((prev) => {
@@ -90,20 +91,20 @@ function Home() {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [isRunning, timerConfig.greenDuration, onTimerComplete]);
+  }, [isRunning, timerConfig.greenDuration, onTimerComplete, cycleMode]);
 
   useEffect(() => {
     setRemainingTime(timerConfig.greenDuration);
   }, [timerConfig.greenDuration]);
 
-  const setEmergencySignal = useCallback((id) => {
-    setSignals((prev) =>
-      prev.map((signal) => ({
-        ...signal,
-        state: signal.id === id ? "green" : "red",
-      }))
-    );
-  }, []);
+  // const setEmergencySignal = useCallback((id) => {
+  //   setSignals((prev) =>
+  //     prev.map((signal) => ({
+  //       ...signal,
+  //       state: signal.id === id ? "green" : "red",
+  //     }))
+  //   );
+  // }, []);
 
   const handleSignalClick = useCallback(
     (id) => {
@@ -128,6 +129,46 @@ function Home() {
     [emergencySignalId, timerConfig.emergencyDuration, updateSignals]
   );
 
+  const setFlowDirection = useCallback(
+    (direction) => {
+      const positions = getPositions(intersectionType);
+
+      console.log("positions", positions)
+      const newSignals = positions.map((position, i) => ({
+        id: i,
+        state: "red",
+        position,
+      }));
+
+      console.log("newSignals", newSignals)
+
+      if (direction === "horizontal") {
+        const eastIndex = positions.findIndex((p) => p.includes("East"));
+
+        console.log("eastIndex", eastIndex)
+        const westIndex = positions.findIndex((p) => p.includes("West"));
+        if (eastIndex !== -1) newSignals[eastIndex].state = "green";
+        if (westIndex !== -1) newSignals[westIndex].state = "green";
+      } else {
+        const northIndex = positions.findIndex((p) => p.includes("North"));
+        const southIndex = positions.findIndex((p) => p.includes("South"));
+        if (northIndex !== -1) newSignals[northIndex].state = "green";
+        if (southIndex !== -1) newSignals[southIndex].state = "green";
+      }
+
+      setSignals(newSignals);
+    },
+    [intersectionType]
+  );
+
+  const handleDirectionChange = useCallback(
+    (direction) => {
+      setFlowDirection(direction);
+      setRemainingTime(timerConfig.greenDuration);
+    },
+    [setFlowDirection, timerConfig.greenDuration]
+  );
+
   return (
     <div className="min-h-screen bg-gray-100 p-8">
       <div className="max-w-6xl mx-auto space-y-8">
@@ -143,6 +184,15 @@ function Home() {
           onCycleModeChange={setCycleMode}
           onTimerConfigChange={setTimerConfig}
         />
+
+        {cycleMode === "manual" && (
+          <div className="flex justify-center">
+            <DirectionControl
+              onDirectionChange={handleDirectionChange}
+              disabled={emergencySignalId !== null}
+            />
+          </div>
+        )}
 
         {emergencySignalId !== null ? (
           <div className="flex items-center gap-2 bg-red-100 text-red-700 p-4 rounded-lg">
