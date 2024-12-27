@@ -31,6 +31,7 @@ function Home() {
   const updateSignals = useCallback(() => {
     const positions = getPositions(intersectionType);
 
+    console.log("activeSignalIndex", activeSignalIndex);
     const newSignals = Array.from({ length: intersectionType }, (_, i) => ({
       id: i,
       state: i === activeSignalIndex ? "green" : "red",
@@ -50,6 +51,9 @@ function Home() {
       if (mode === "manual") return;
 
       setActiveSignalIndex((prev) => {
+        console.log("prev value", prev);
+        console.log("inter", intersectionType);
+        // debugger;
         const newIndex =
           mode === "clockwise"
             ? (prev + 1) % intersectionType

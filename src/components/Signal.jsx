@@ -1,6 +1,6 @@
 import React from "react";
 
-export const Signal = ({ state, position, onClick, isEmergency }) => {
+export const Signal = ({ id, state, position, onClick, isEmergency }) => {
   return (
     <div
       className={`
@@ -26,6 +26,7 @@ export const Signal = ({ state, position, onClick, isEmergency }) => {
           }`}
         />
       </div>
+      <h1>{id}</h1>
       <span className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-sm font-medium">
         {position}
       </span>

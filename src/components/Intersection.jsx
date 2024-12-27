@@ -40,6 +40,7 @@ export const Intersection = ({
               }}
             >
               <Signal
+                id={signal.id}
                 state={signal.state}
                 position={signal.position}
                 onClick={() => onSignalClick(signal.id)}
