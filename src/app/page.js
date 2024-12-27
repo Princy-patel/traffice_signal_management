@@ -57,14 +57,11 @@ function Home() {
       if (mode === "manual") return;
 
       setActiveSignalIndex((prev) => {
-        console.log("prev value", prev);
-        console.log("inter", intersectionType);
         // debugger;
         const newIndex =
           mode === "clockwise"
             ? (prev + 1) % intersectionType
             : (prev - 1 + intersectionType) % intersectionType;
-        console.log("Cycling signals to index:", newIndex);
         return newIndex;
       });
     },
@@ -133,19 +130,15 @@ function Home() {
     (direction) => {
       const positions = getPositions(intersectionType);
 
-      console.log("positions", positions)
       const newSignals = positions.map((position, i) => ({
         id: i,
         state: "red",
         position,
       }));
 
-      console.log("newSignals", newSignals)
-
       if (direction === "horizontal") {
         const eastIndex = positions.findIndex((p) => p.includes("East"));
 
-        console.log("eastIndex", eastIndex)
         const westIndex = positions.findIndex((p) => p.includes("West"));
         if (eastIndex !== -1) newSignals[eastIndex].state = "green";
         if (westIndex !== -1) newSignals[westIndex].state = "green";
