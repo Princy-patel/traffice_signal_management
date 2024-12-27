@@ -18,15 +18,15 @@ export const Intersection = ({
   };
 
   return (
-    <div className="w-[400px] h-[100px] flex justify-between items-center relative">
-      <div className="absolute inset-0 items-center z-10">
+    <div className="relative w-[400px] h-[400px]">
+      <div className="absolute inset-0 flex items-center justify-center z-10">
         <TimingDisplay
           remainingTime={remainingTime}
           totalDuration={currentDuration}
           label={emergencySignalId !== null ? "Emergency" : "Current Signal"}
         />
       </div>
-      <div className="absolute inset-0 bg-gray-100 rounded-full mt-56">
+      <div className="absolute inset-0 bg-gray-100 rounded-full">
         {signals.map((signal, index) => {
           const pos = getSignalPosition(index, signals.length);
           return (
@@ -39,14 +39,12 @@ export const Intersection = ({
                 transform: `translate(${pos.x}px, ${pos.y}px)`,
               }}
             >
-              <div className="pt-28">
-                <Signal
-                  state={signal.state}
-                  position={signal.position}
-                  onClick={() => onSignalClick(signal.id)}
-                  isEmergency={emergencySignalId === signal.id}
-                />
-              </div>
+              <Signal
+                state={signal.state}
+                position={signal.position}
+                onClick={() => onSignalClick(signal.id)}
+                isEmergency={emergencySignalId === signal.id}
+              />
             </div>
           );
         })}

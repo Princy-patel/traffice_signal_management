@@ -4,8 +4,6 @@ import React, { useState, useCallback, useEffect } from "react";
 import { AlertTriangle } from "lucide-react";
 import { ConfigPanel } from "@/components/ConfigPanel";
 import { Intersection } from "@/components/Intersection";
-// import { useSignalTimer } from "./hooks/useSignalTimer";
-// import { useSignalState } from "./hooks/useSignalState";
 
 function Home() {
   const [intersectionType, setIntersectionType] = useState(4);
@@ -32,9 +30,7 @@ function Home() {
 
   const updateSignals = useCallback(() => {
     const positions = getPositions(intersectionType);
-    console.log("positions", positions);
 
-    console.log("activeSignalIndex", activeSignalIndex);
     const newSignals = Array.from({ length: intersectionType }, (_, i) => ({
       id: i,
       state: i === activeSignalIndex ? "green" : "red",
@@ -45,40 +41,31 @@ function Home() {
     setSignals(newSignals);
   }, [intersectionType, activeSignalIndex]);
 
+  useEffect(() => {
+    updateSignals();
+  }, [intersectionType, updateSignals]);
+
   const cycleSignals = useCallback(
     (mode) => {
       if (mode === "manual") return;
 
-      setActiveSignalIndex((prev) =>
-        mode === "clockwise"
-          ? (prev + 1) % intersectionType
-          : (prev - 1 + intersectionType) % intersectionType
-      );
-
-      console.log("intersectionType", intersectionType);
+      setActiveSignalIndex((prev) => {
+        const newIndex =
+          mode === "clockwise"
+            ? (prev + 1) % intersectionType
+            : (prev - 1 + intersectionType) % intersectionType;
+        console.log("Cycling signals to index:", newIndex);
+        return newIndex;
+      });
     },
     [intersectionType]
   );
-
-  const setEmergencySignal = useCallback((id) => {
-    // console.log("signalsssss", signals);
-    setSignals((prev) =>
-      prev.map((signal) => ({
-        ...signal,
-        state: signal.id === id ? "green" : "red",
-      }))
-    );
-  }, []);
 
   const onTimerComplete = useCallback(() => {
     if (emergencySignalId === null) {
       cycleSignals(cycleMode);
     }
   }, [emergencySignalId, cycleSignals, cycleMode]);
-
-  useEffect(() => {
-    updateSignals();
-  }, [intersectionType, updateSignals]);
 
   useEffect(() => {
     if (!isRunning) return;
@@ -100,23 +87,14 @@ function Home() {
     setRemainingTime(timerConfig.greenDuration);
   }, [timerConfig.greenDuration]);
 
-  // const {
-  //   signals,
-  //   activeSignalIndex,
-  //   updateSignals,
-  //   cycleSignals,
-  //   setEmergencySignal,
-  // } = useSignalState(intersectionType);
-
-  // const remainingTime = useSignalTimer(
-  //   isRunning && cycleMode !== "manual",
-  //   timerConfig,
-  //   () => {
-  //     if (emergencySignalId === null) {
-  //       cycleSignals(cycleMode);
-  //     }
-  //   }
-  // );
+  const setEmergencySignal = useCallback((id) => {
+    setSignals((prev) =>
+      prev.map((signal) => ({
+        ...signal,
+        state: signal.id === id ? "green" : "red",
+      }))
+    );
+  }, []);
 
   const handleSignalClick = useCallback(
     (id) => {
