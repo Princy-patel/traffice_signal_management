@@ -25,6 +25,7 @@ function Home() {
       3: ["North", "South East", "South West"],
       4: ["North", "East", "South", "West"],
       5: ["North", "North East", "South East", "South West", "North West"],
+      6: ["North", "North East", "South East", "South West", "North West", "South West"],
     };
     return positions[type];
   };

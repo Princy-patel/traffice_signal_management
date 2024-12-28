@@ -17,7 +17,7 @@ export const ConfigPanel = ({
             Intersection Type
           </label>
           <div className="flex gap-2">
-            {[3, 4, 5].map((type) => (
+            {[3, 4, 5, 6].map((type) => (
               <button
                 key={type}
                 onClick={() => onIntersectionTypeChange(type)}

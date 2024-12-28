@@ -11,7 +11,7 @@ export const Intersection = ({
 }) => {
   const getSignalPosition = (index, total) => {
     const angle = (360 / total) * index - 90;
-    const radius = 120;
+    const radius = total === 6 ? 180 : 120;
     const x = radius * Math.cos((angle * Math.PI) / 180);
     const y = radius * Math.sin((angle * Math.PI) / 180);
     return { x, y };
@@ -32,6 +32,7 @@ export const Intersection = ({
           return (
             <div
               key={signal.id}
+              className="[&>*]:m-6"
               style={{
                 position: "absolute",
                 left: "50%",
